@@ -1,0 +1,22 @@
+{
+  "status": "pass",
+  "districts": 640,
+  "viirs_panel_rows": 12800,
+  "dmsp_panel_rows": 12800,
+  "main_endpoint_rows": 640,
+  "lisa_islands_excluded": 12,
+  "spatial_regions": 3,
+  "pdf_pages": 10,
+  "checks": [
+    "joins",
+    "formulae",
+    "bounded covariates",
+    "reported descriptive statistics",
+    "local Moran islands",
+    "regionalization",
+    "impact arithmetic and intervals",
+    "robustness sign",
+    "figures",
+    "report text"
+  ]
+}

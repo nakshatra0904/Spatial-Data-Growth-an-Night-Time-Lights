@@ -1,0 +1,128 @@
+{
+  "n_districts": 640,
+  "period": [
+    2013,
+    2021
+  ],
+  "interval_years": 8,
+  "mean_annual_log_growth": 0.06818864482468712,
+  "median_annual_log_growth": 0.0587906466875,
+  "share_negative_growth": 0.1046875,
+  "ols_unconditional_beta": -0.057366988866714166,
+  "ols_unconditional_intercept": 0.1666236204616812,
+  "ols_unconditional_R2": 0.5864076390124764,
+  "ols_unconditional_p": 5.3987177404031984e-101,
+  "ols_conditional_beta": -0.04568575770484251,
+  "ols_conditional_se": 0.003441702067767732,
+  "ols_conditional_p": 3.2684821826982904e-40,
+  "ols_conditional_R2": 0.7996608388324423,
+  "sar_rho": 0.1965719687886117,
+  "sem_lambda": 0.31694118564644597,
+  "sdm_rho": 0.32529480806560124,
+  "sar_aic": -2658.293197565663,
+  "sem_aic": -2672.8531253338833,
+  "sdm_aic": -2673.6927857171586,
+  "sdm_vs_sar_LR": 25.399588151495664,
+  "sdm_vs_sar_LR_p_chi2_df5": 0.0001166359395811277,
+  "ols_aic": -2637.6481996744587,
+  "weights": {
+    "queen_islands": 12,
+    "queen_components": 34,
+    "queen_mean_neighbors": 4.140625,
+    "knn8_components": 1
+  },
+  "moran": {
+    "growth": {
+      "I": 0.6543665696681792,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.001,
+      "p_permutation_upper": 0.001,
+      "z_normal": 22.315533751315552
+    },
+    "initial": {
+      "I": 0.6123944553904267,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.001,
+      "p_permutation_upper": 0.001,
+      "z_normal": 20.887594840758624
+    },
+    "ols_residual": {
+      "I": 0.1693060607167512,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.001,
+      "p_permutation_upper": 0.001,
+      "z_normal": 5.81322533476227
+    },
+    "sar_residual": {
+      "I": 0.06896253821718447,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.024,
+      "p_permutation_upper": 0.015,
+      "z_normal": 2.399424942166264
+    },
+    "sdm_residual": {
+      "I": -0.003743464690433219,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.935,
+      "p_permutation_upper": 0.461,
+      "z_normal": -0.07411570188660284
+    },
+    "sem_filtered_residual": {
+      "I": 0.0113808768903672,
+      "expected_I": -0.001564945226917058,
+      "p_permutation_two_sided": 0.665,
+      "p_permutation_upper": 0.32,
+      "z_normal": 0.4404315448130086
+    }
+  },
+  "lisa_clusters": {
+    "not significant": 552,
+    "low-low": 37,
+    "high-high": 37,
+    "no contiguous neighbor": 12,
+    "low-high": 2
+  },
+  "spatial_typology": {
+    "selected_k": 3,
+    "candidate_scores": [
+      {
+        "k": 2,
+        "silhouette": 0.1398276946273207,
+        "smallest_cluster": 252
+      },
+      {
+        "k": 3,
+        "silhouette": 0.15782928439968086,
+        "smallest_cluster": 41
+      },
+      {
+        "k": 4,
+        "silhouette": 0.10520418278629395,
+        "smallest_cluster": 41
+      },
+      {
+        "k": 5,
+        "silhouette": 0.11782055045244533,
+        "smallest_cluster": 17
+      },
+      {
+        "k": 6,
+        "silhouette": 0.07736357492923811,
+        "smallest_cluster": 17
+      }
+    ],
+    "connected_components_by_cluster": {
+      "1": 1,
+      "2": 1,
+      "3": 1
+    },
+    "features": [
+      "log_initial",
+      "growth_annual",
+      "log_density",
+      "literacy2011",
+      "agwork2011"
+    ],
+    "graph": "symmetric 8-nearest centroid neighbors in EPSG:6933"
+  }
+}
