@@ -1,0 +1,567 @@
+
+\documentclass[11pt]{article}
+
+% Page and typography
+\usepackage[a4paper,margin=25mm,headheight=15pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+
+% Mathematics, tables, and figures
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage{needspace}
+
+% Document styling
+\usepackage[dvipsnames]{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\definecolor{reportblue}{HTML}{17365D}
+\definecolor{reportgray}{HTML}{5B6573}
+\definecolor{rulegray}{HTML}{C9CED6}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=reportblue,
+  citecolor=reportblue,
+  urlcolor=reportblue,
+  pdftitle={Spatial Patterns in Indian District Night-Light Growth},
+  pdfauthor={Nakshatra Ghosh},
+  pdfsubject={Descriptive statistics, spatial econometrics, and cluster analysis}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55\baselineskip}
+\setstretch{1.04}
+\setcounter{tocdepth}{2}
+\setlist[itemize]{leftmargin=1.5em,itemsep=0.2em,topsep=0.25em}
+
+\titleformat{\section}
+  {\Large\bfseries\color{reportblue}}
+  {\thesection}{0.65em}{}
+  [\vspace{-0.35em}\color{rulegray}\titlerule]
+\titleformat{\subsection}
+  {\large\bfseries\color{reportblue}}
+  {\thesubsection}{0.6em}{}
+
+\captionsetup{
+  font=small,
+  labelfont={bf,color=reportblue},
+  justification=raggedright,
+  singlelinecheck=false,
+  skip=6pt
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{reportgray}Indian district night-light growth}
+\fancyhead[R]{\small\color{reportgray}SHRUG v2.2}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\newcommand{\V}[1]{\mathbf{#1}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\Rtwo}{\ensuremath{R^{2}}}
+\newcommand{\NA}{\textemdash}
+\newcommand{\reportsection}[1]{\Needspace{8\baselineskip}\section{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+  \thispagestyle{empty}
+  \vspace*{18mm}
+
+  {\color{reportblue}\rule{\textwidth}{2.2pt}}\\[12mm]
+  {\fontsize{27}{32}\selectfont\bfseries\color{reportblue}
+    Spatial Patterns in Indian District\\[2mm]
+    Night-Light Growth\par}
+  \vspace{7mm}
+  {\Large\color{reportgray}
+    Descriptive statistics, spatial econometrics, and cluster analysis\par}
+  \vspace{11mm}
+  {\color{rulegray}\rule{\textwidth}{0.8pt}}
+
+  \vfill
+
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Author} & Nakshatra Ghosh \\
+    \textbf{Document} & Research report \\
+    \textbf{Data source} & SHRUG v2.2 \\
+    \textbf{Date} & 30 September 2026
+  \end{tabular}
+
+  \vfill
+
+  \begin{minipage}{0.92\textwidth}
+    \small\color{reportgray}
+    This report studies growth in satellite-observed nighttime light across
+    640 Indian Census 2011 districts. Results describe associations in
+    remotely sensed light; they are not estimates of district GDP or causal
+    spatial spillovers.
+  \end{minipage}
+  \vspace{10mm}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+This study analyzes 640 Indian Census 2011 districts using SHRUG v2.2
+nighttime lights. The main comparison uses VIIRS observations from 2013 to
+2021 and fixed 2011 population to normalize district size. Lower initially lit
+districts show faster subsequent light growth in a conditional model, while
+growth is strongly spatially clustered. Spatial lag, spatial error, and
+spatial Durbin models separate forms of dependence. Local Moran analysis and
+a graph-constrained Ward typology describe regional clusters. These are
+associations in satellite light, not district GDP or causal spillovers.
+
+\subsection*{Key results}
+
+\begin{table}[H]
+  \centering
+  \caption*{Headline estimates}
+  \begin{tabularx}{\textwidth}{@{}Y>{\raggedleft\arraybackslash}p{0.31\textwidth}@{}}
+    \toprule
+    \textbf{Measure} & \textbf{Estimate} \\
+    \midrule
+    Mean annual 2013--2021 log-light growth & 0.0682 \\
+    Conditional OLS initial-light coefficient & $-0.0457$ (HC3 SE 0.00344) \\
+    Global Moran's $I$ for growth & 0.654 (permutation $p=0.001$) \\
+    Spatial Durbin $\rho$ & 0.3253 \\
+    Spatial Durbin residual Moran's $I$ & $-0.0037$ ($p=0.935$) \\
+    FDR-significant high--high / low--low districts & 37 / 37 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\textbf{Interpretation.} Light is normalized by each district's 2011
+population, held fixed in every year. It is therefore
+baseline-population-normalized light, not contemporaneous per-capita income.
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\pagenumbering{arabic}
+
+\reportsection{Research question and data}
+
+The first project in the supplied brief asks whether less initially lit Indian
+districts grew faster, whether growth forms spatial clusters, and whether
+nearby outcomes or characteristics are associated with district growth. The
+unit is the Census 2011 district, held fixed over time. Night lights are an
+imperfect economic-activity proxy: electrification, lighting technology, and
+settlement patterns also matter \cite{henderson2012}.
+
+The source tables are SHRUG v2.2 district VIIRS annual sum, calibrated DMSP
+district light, the 2011 Population Census Abstract, a population/land-area
+key, and district polygons \cite{shrug,asher2021}. The raw VIIRS table covers
+2012--2023, but published metadata describes 2012--2021; the documented range
+is used here. VIIRS and DMSP are never spliced.
+
+\subsection{Data audit}
+
+\begin{table}[H]
+  \centering
+  \caption{Data-integrity checks.}
+  \begin{tabularx}{\textwidth}{@{}p{0.36\textwidth}Y@{}}
+    \toprule
+    \textbf{Check} & \textbf{Result} \\
+    \midrule
+    District census and area rows & 640 each; population values agree \\
+    VIIRS derived panel & 12,800 rows $=640\times10$ years $\times2$ masks \\
+    DMSP derived panel & 12,800 rows $=640\times20$ years \\
+    Polygon match & 640 exact keys; one unlabeled district-000 placeholder removed \\
+    Main endpoint sample & 640 districts, no missing covariates, positive endpoint VIIRS light \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Variable construction}
+
+For district $i$ and year $t$, normalized light, log light, and annual growth
+are defined as
+\begin{align}
+  L_{it} &= \frac{1{,}000\times \mathrm{VIIRS\_sum}_{it}}
+                  {\mathrm{population}_{i,2011}}, \\
+  z_{it} &= \log(L_{it}), \\
+  g_i &= \frac{z_{i,2021}-z_{i,2013}}{8}.
+\end{align}
+The fixed denominator means that the growth rate equals growth of total
+district light. Baseline controls are log 2011 density, adult literacy,
+agricultural main-worker share, Scheduled Caste/Tribe share, and state
+indicators.
+
+The principal log comparison starts in 2013 because the 2012 VIIRS
+observations include zeros. For DMSP, concurrent calibrated satellite
+measurements are averaged within district-year. The historical log check
+begins in 2000, the first year positive for every district.
+
+\reportsection{Numerical and visual description}
+
+\begin{table}[H]
+  \centering
+  \caption{District-level descriptive statistics.}
+  \small
+  \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
+    \toprule
+    \textbf{District variable} & \textbf{Mean} & \textbf{Median} & \textbf{P10} & \textbf{P90} \\
+    \midrule
+    VIIRS per 1,000 baseline residents, 2013 & 7.689 & 6.068 & 1.641 & 15.259 \\
+    VIIRS per 1,000 baseline residents, 2021 & 11.209 & 9.829 & 4.653 & 18.272 \\
+    Annual log-light growth & 0.0682 & 0.0588 & $-0.0004$ & 0.1478 \\
+    2011 density & 994.0 & 409.8 & 137.7 & 1,251.8 \\
+    2011 literacy share & 0.723 & 0.722 & 0.590 & 0.854 \\
+    2011 agricultural worker share & 0.533 & 0.591 & 0.197 & 0.773 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Mean normalized light rises 45.8\% from 2013 to 2021; the median rises
+62.0\%. Mean annual log growth is 0.0682, and 10.5\% of districts have
+negative endpoint growth. The distribution is right-skewed. The annual series
+has a noticeable 2016--2017 step, which could reflect illumination or
+processing as well as activity.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{results/figures/viirs_trend.png}
+  \caption{VIIRS district mean and median light per 1,000 fixed 2011 residents.}
+  \label{fig:viirs-trend}
+\end{figure}
+
+\clearpage
+\reportsection{Distribution and spatial clustering}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{results/figures/distribution_convergence.png}
+  \caption{Growth distribution and unconditional OLS line with a 95\% confidence band for the fitted mean.}
+  \label{fig:distribution-convergence}
+\end{figure}
+
+The fitted unconditional line is
+\[
+  \widehat{g}=0.16662-0.05737\log(\text{initial normalized VIIRS light}),
+  \qquad \Rtwo=0.586.
+\]
+The negative slope is an association in annual log-light growth, not a line
+for GDP growth. The conditional fitted relation instead has an initial-light
+slope of $-0.04569$ after controls and state effects (Section~\ref{sec:theory}).
+
+Global Moran's $I$ compares district deviations with the weighted deviations
+of Queen-contiguous neighbors. The Queen graph has 4.14 neighbors per district
+on average, 34 disconnected components, and 12 districts with no contiguous
+neighbor. Those 12 retain zero rows in $\W$; no distant boundary is invented.
+An eight-nearest-neighbor graph is a sensitivity test.
+
+\begin{table}[H]
+  \centering
+  \caption{Global spatial-autocorrelation tests.}
+  \begin{tabularx}{0.86\textwidth}{@{}Yrr@{}}
+    \toprule
+    \textbf{Moran test} & \textbf{$I$} & \textbf{Two-sided permutation $p$} \\
+    \midrule
+    Initial normalized light & 0.6124 & 0.001 \\
+    Annual growth & 0.6544 & 0.001 \\
+    Conditional OLS residual & 0.1693 & 0.001 \\
+    Spatial Durbin residual & $-0.0037$ & 0.935 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+Local Moran statistics use 999 permutations and Benjamini--Hochberg false
+discovery rate control at 5\% over the 628 districts with a Queen neighbor.
+Results are 37 high--high, 37 low--low, two low--high, 552 not significant,
+and 12 with no contiguous neighbor. High--high examples include districts in
+Bihar and Manipur. Spatial clustering does not by itself establish diffusion.
+
+\reportsection{Where growth clusters occur}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{results/figures/growth_maps.png}
+  \caption{Annual 2013--2021 growth and Local Moran classes after FDR correction. Dark gray marks no-neighbor districts.}
+  \label{fig:growth-maps}
+\end{figure}
+
+The map shows broad geographic heterogeneity, including fast-growing clusters
+in parts of Bihar and the northeast. Neighbor definitions matter where the
+source polygons have gaps or inaccuracies; the supplied SHRUG map
+documentation cautions about boundary precision.
+
+\subsection{Graph-constrained Ward grouping}
+
+We standardize five district features: initial log light, annual growth, log
+density, literacy, and agricultural-employment share. Ward agglomerative
+clustering may merge districts only along a symmetric eight-nearest-neighbor
+graph. We compare two through six groups with the silhouette score. Three
+groups score highest (0.158), and each is connected in the graph. The low
+score signals modest separation, so these are a descriptive typology, not
+sharply defined economic regions. Growth is an input to clustering and cannot
+be used as an independent validation.
+
+\clearpage
+\reportsection{Spatially constrained district typology}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth,height=0.64\textheight,keepaspectratio]{results/figures/spatial_regions.png}
+  \caption{Three Ward groups constrained by a symmetric eight-nearest-neighbor graph.}
+  \label{fig:spatial-regions}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Profiles of the three spatially constrained groups.}
+  \begin{tabular}{@{}rrrrr@{}}
+    \toprule
+    \textbf{Group} & \textbf{Districts} & \textbf{Mean growth} &
+    \textbf{Mean initial log light} & \textbf{Median density} \\
+    \midrule
+    1 & 252 & 0.1023 & 1.443 & 351.6 \\
+    2 & 347 & 0.0406 & 1.999 & 495.5 \\
+    3 & 41  & 0.0924 & 0.997 & 56.6 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Group 1 combines relatively low initial light and fast growth; group 2 has
+higher initial light and slower growth; group 3 has very low density and fast
+growth. These profiles follow in part from the features used to form the
+groups.
+
+\reportsection{Econometric theory and implementation}
+\label{sec:theory}
+
+\subsection{OLS benchmark and convergence}
+
+The absolute model regresses annual growth $g_i$ on initial log light
+$z_{i,2013}$. The conditional model adds 2011 district characteristics and
+state indicators. HC3 robust standard errors allow heteroskedasticity. A
+negative coefficient is consistent with initially darker districts catching
+up in light, conditional on measured covariates. Under a restrictive
+transitional growth law,
+\[
+  \beta=\frac{\exp(-8\lambda)-1}{8},
+  \qquad
+  \lambda=-\frac{\log(1+8\beta)}{8}
+\]
+is an implied speed.
+
+With state 01 as the reference, the estimated conditional equation is
+\begin{align*}
+  \widehat{g}_i={}&0.22351
+  -0.04569\,\text{initial log light}_i \\
+  &-0.01563\,\text{log density}_i
+  +0.01361\,\text{literacy}_i \\
+  &-0.01720\,\text{agricultural worker share}_i
+  -0.01023\,\text{SC/ST share}_i
+  +\widehat{\text{state effect}}_i.
+\end{align*}
+The intercept is a model reference term; the plotted line in
+Figure~\ref{fig:distribution-convergence} is the simpler unconditional fit.
+
+\subsection{Three spatial alternatives}
+
+Let $\V{Z}$ denote the design matrix and $\W$ the row-standardized spatial
+weights matrix. The three alternatives are
+\begin{align}
+  \text{SAR:}\quad & \V{g}=\rho\W\V{g}+\V{Z}\V{b}+\V{\varepsilon}, \\
+  \text{SEM:}\quad & \V{g}=\V{Z}\V{b}+\V{u},
+    & \V{u}=\lambda\W\V{u}+\V{\varepsilon}, \\
+  \text{SDM:}\quad & \V{g}=\rho\W\V{g}+\V{Z}\V{b}
+    +\W\V{Z}\V{\theta}+\V{\varepsilon}.
+\end{align}
+The simultaneous spatial-outcome term in SAR requires maximum likelihood;
+$\rho$ captures conditional spatial association. SEM attributes dependence to
+unobserved spatial shocks. SDM additionally includes neighbors' initial light
+and other continuous characteristics. State indicators are never spatially
+lagged. All spatial models use Gaussian maximum likelihood with the Ord
+eigenvalue method.
+
+In the SDM, impacts require
+\[
+  \V{S}_k=(\V{I}-\rho\W)^{-1}(\beta_k\V{I}+\theta_k\W).
+\]
+The average direct impact is $\operatorname{tr}(\V{S}_k)/n$; the average total
+impact is $\V{1}^{\mathsf T}\V{S}_k\V{1}/n$; and the indirect impact is total
+minus direct. Exact matrix calculations retain the zero-neighbor rows.
+Uncertainty intervals draw 5,000 times from the full model covariance matrix.
+They do not cover uncertainty about $\W$ or the source measurement.
+
+\subsection{Diagnostics}
+
+We compare AIC, a nested likelihood-ratio test for SAR versus SDM, and Moran
+tests on model residuals. OLS standard errors are HC3; spatial-model standard
+errors use the Gaussian likelihood. Neither specification delivers causal
+identification.
+
+\reportsection{Model estimates and interpretation}
+
+\begin{table}[H]
+  \centering
+  \caption{OLS and spatial-model estimates.}
+  \small
+  \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
+    \toprule
+    \textbf{Model} & \textbf{Initial coefficient} & \textbf{Spatial parameter} &
+    \textbf{AIC} & \textbf{Residual $I$} \\
+    \midrule
+    OLS: initial level only & $-0.0574$ & \NA & \NA & \NA \\
+    OLS: controls + state & $-0.0457$ & \NA & $-2637.6$ & 0.1693 \\
+    SAR: controls + state & $-0.0433$ & $\rho=0.1966$ & $-2658.3$ & 0.0690 \\
+    SEM: controls + state & $-0.0459$ & $\lambda=0.3169$ & $-2672.9$ & 0.0114\textsuperscript{*} \\
+    SDM: controls + state & $-0.0468$ & $\rho=0.3253$ & $-2673.7$ & $-0.0037$ \\
+    \bottomrule
+  \end{tabularx}
+  \vspace{0.35em}
+
+  \parbox{\textwidth}{\footnotesize
+  \textsuperscript{*}SEM reports Moran's $I$ for its filtered innovations.
+  All models use 640 districts.}
+\end{table}
+
+The OLS conditional initial-light coefficient has HC3 SE 0.00344 and
+$\Rtwo=0.800$. Its implied speed is 5.69\% per year (approximately
+4.67\%--6.80\% from its coefficient interval), conditional on the
+transitional-growth interpretation.
+
+SAR leaves modest residual spatial dependence ($I=0.0690$, $p=0.024$). SEM
+filtered innovations ($I=0.0114$, $p=0.665$) and SDM residuals
+($I=-0.0037$, $p=0.935$) do not show detectable residual clustering. SDM has
+the lowest AIC, but its 0.84-point advantage over SEM is small. The nested
+SAR-versus-SDM likelihood-ratio statistic is 25.40 on five extra spatially
+lagged regressors ($p=0.000117$). The data support additional spatial
+structure compared with SAR without decisively separating covariate
+spillovers from spatially correlated omitted factors.
+
+\begin{table}[H]
+  \centering
+  \caption{Spatial Durbin impacts of initial log light.}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    \textbf{Impact} & \textbf{Point estimate} & \textbf{95\% lower} & \textbf{95\% upper} \\
+    \midrule
+    Average direct & $-0.04652$ & $-0.05089$ & $-0.04221$ \\
+    Average indirect & 0.00428 & $-0.00358$ & 0.01222 \\
+    Average total & $-0.04225$ & $-0.05107$ & $-0.03359$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The neighboring initial-light coefficient in the SDM is positive, but the
+average indirect-impact interval crosses zero. It is therefore not evidence
+for a precisely signed average spillover. The negative direct and total
+impacts align with convergence in this light proxy. The outcome-spatial
+parameter is an association, not proof that one district caused another to
+grow.
+
+\reportsection{Robustness checks}
+
+\begin{table}[H]
+  \centering
+  \caption{Alternative samples, periods, measures, and spatial weights.}
+  \footnotesize
+  \begin{tabularx}{\textwidth}{@{}Yrrr@{}}
+    \toprule
+    \textbf{Specification} & \textbf{Districts} &
+    \textbf{Conditional OLS $\beta$ (HC3 SE)} & \textbf{SAR $\rho$} \\
+    \midrule
+    VIIRS median-masked & 640 & $-0.0458$ (0.0035) & 0.214 \\
+    VIIRS 2014--2019 & 640 & $-0.0536$ (0.0044) & 0.252 \\
+    VIIRS eight-neighbor graph & 640 & $-0.0457$ (0.0034) & 0.141 \\
+    Two-year-smoothed endpoints & 640 & $-0.0445$ (0.0036) & 0.238 \\
+    Queen non-islands & 628 & $-0.0460$ (0.0035) & 0.184 \\
+    Separate DMSP 2000--2013 & 640 & $-0.0259$ (0.0026) & 0.450 \\
+    Trim 1\% in both growth tails & 626 & $-0.0421$ (0.0032) & \NA \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+The negative initial-light association persists under alternative VIIRS
+masking, a pre-2020 interval, endpoint smoothing, geographic definitions,
+removal of Queen islands, and trimming. The DMSP result is a historical sign
+check only; its coefficients must not be compared numerically with VIIRS due
+to sensor and processing differences.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{results/figures/ols_residuals.png}
+  \caption{Conditional OLS residuals versus fitted annual log growth.}
+  \label{fig:ols-residuals}
+\end{figure}
+
+\reportsection{Limits and conclusion}
+
+First, this is an analysis of lights, not directly observed district GDP or
+consumption. Electrification, saturation, blooming, masking, and local
+economic composition can alter the lights--output relation. Second, fixed
+2011 population does not measure migration or population growth by 2021.
+Third, state controls cannot remove district-specific omitted variables,
+common regional shocks, or measurement error. The growth formula reuses the
+initial light observation, so regression to the mean may contribute to its
+negative coefficient. Fourth, the spatial models rely on a chosen neighbor
+graph and Gaussian likelihood; geometry gaps produce disconnected Queen
+components.
+
+The supported conclusions are narrower: normalized light rose in most
+districts; initially darker districts tended to show faster subsequent light
+growth; and that growth was strongly spatially patterned. SEM and SDM explain
+more of the residual geographic pattern than a conventional regression. A
+stronger claim about economic convergence or causal spatial spillovers would
+require validated output or consumption measures, annual population, and a
+research design with exogenous sources of variation.
+
+\subsection{Reproducibility and data rights}
+
+The accompanying repository contains harmonized panels, district polygons,
+numerical tables, figures, the Python pipeline, source links, and LaTeX
+source. SHRUG-derived data and maps retain the upstream noncommercial CC
+BY-NC-SA 4.0 terms. Data lineage and exact variable definitions appear in
+\texttt{DATA\_SOURCES.md} in the full analysis repository.
+
+\clearpage
+\begin{thebibliography}{9}
+
+\bibitem{asher2021}
+Asher, S., Lunt, T., Matsuura, R., and Novosad, P. (2021).
+Development research at high geographic resolution: An analysis of night
+lights, firms, and poverty in India using the SHRUG open data platform.
+\emph{World Bank Economic Review}, 35(4), 845--871.
+\href{https://doi.org/10.1093/wber/lhab003}{doi:10.1093/wber/lhab003}.
+
+\bibitem{henderson2012}
+Henderson, J. V., Storeygard, A., and Weil, D. N. (2012).
+Measuring economic growth from outer space.
+\emph{American Economic Review}, 102(2), 994--1028.
+\href{https://doi.org/10.1257/aer.102.2.994}{doi:10.1257/aer.102.2.994}.
+
+\bibitem{shrug}
+Development Data Lab. \emph{SHRUG v2.2: Socioeconomic High-resolution Rural--Urban Geographic Platform for India}.
+Project and data documentation; license terms.
+
+\bibitem{pysal}
+PySAL Developers. \emph{spreg: Spatial Regression Models}.
+Official documentation for spatial likelihood and impact estimation.
+
+\end{thebibliography}
+
+\end{document}
