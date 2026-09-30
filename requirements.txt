@@ -1,0 +1,12 @@
+numpy==2.5.3
+pandas==3.0.6
+scipy==1.18.1
+geopandas==1.2.0
+matplotlib==3.11.2
+statsmodels==0.15.0
+libpysal==4.15.0
+esda==2.10.0
+spreg==1.9.1
+scikit-learn==1.9.1
+reportlab==4.4.9
+pypdf==6.10.0
